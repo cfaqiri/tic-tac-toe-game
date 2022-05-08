@@ -21,3 +21,7 @@ npm install
 npm start
 ```
 4. Get a friend and enjoy playing!
+
+# Authors
+Crystal Faqiri - cfaqiri@gmail.com \
+Enzo Falcone
