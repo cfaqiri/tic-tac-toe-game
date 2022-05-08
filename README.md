@@ -24,4 +24,5 @@ npm start
 
 # Authors
 Crystal Faqiri - cfaqiri@gmail.com \
-Enzo Falcone
+Enzo Falcone \
+CSS inspired by [Hammad Ahmed](https://codepen.io/shammadahmed/pen/JOWEGW)
