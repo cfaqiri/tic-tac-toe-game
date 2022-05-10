@@ -16,7 +16,7 @@ git clone https://github.com/cfaqiri/tic-tac-toe-game.git
 ```
 npm install
 ```
-3. Run the development surver
+3. Run the development server
 ```
 npm start
 ```
