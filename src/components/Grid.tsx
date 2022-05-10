@@ -1,31 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import classes from "./Grid.module.css";
 
 export default function Grid() {
   const defaultGridValues = [...Array(9).fill("")];
+  const didMount = useRef(false);
 
   const [playerTurn, setPlayerTurn] = useState(true);
   const [gridValues, setGridValues] = useState(defaultGridValues);
 
-  useEffect(() => {
-    if (hasWon()) {
-      alert('Winner!');
-    }
-  }, [gridValues])
-
   const hasWon = (): boolean => {
-    // Alert players when someone wins - work in progress
     if (
       gridValues[0] !== "" &&
       gridValues[0] === gridValues[1] &&
       gridValues[1] === gridValues[2]
     ) {
-      return true
+      return true;
     }
-    return false
+    return false;
   };
 
-  const printHello = (index: number) => (event: any) => {
+  useEffect(() => {
+    if (didMount.current) {
+      if (hasWon()) {
+        const winner: 1|2 = playerTurn ?  1 : 2;
+        alert(`Winner: Player ${winner}!`);
+      } else {
+        // Problem: when component first renders, useEffect will run, changing the playerTurn
+        setPlayerTurn(!playerTurn);
+      }
+    } else {
+      didMount.current = true;
+    }
+  }, [gridValues]);
+
+  const inputSymbol = (index: number) => (event: any) => {
+    // Boxes shouldn't be clicked more than once
     if (gridValues[index] !== "") {
       return;
     }
@@ -36,7 +45,6 @@ export default function Grid() {
     const temporaryArray: string[] = [...gridValues];
     temporaryArray[index] = mark;
     setGridValues(temporaryArray);
-    setPlayerTurn(!playerTurn);
   };
 
   return (
@@ -45,7 +53,7 @@ export default function Grid() {
         <div
           key={"box-" + index}
           className={classes.box}
-          onClick={printHello(index)}
+          onClick={inputSymbol(index)}
         >
           {value}
         </div>
