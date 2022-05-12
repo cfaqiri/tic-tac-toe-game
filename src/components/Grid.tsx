@@ -3,33 +3,33 @@ import classes from "./Grid.module.css";
 
 export default function Grid() {
   const defaultGridValues = [...Array(9).fill("")];
-  const didMount = useRef(false);
 
-  const [playerTurn, setPlayerTurn] = useState(true);
+  const playerTurn = useRef(true);
   const [gridValues, setGridValues] = useState(defaultGridValues);
 
-  const hasWon = (): boolean => {
-    if (
-      gridValues[0] !== "" &&
-      gridValues[0] === gridValues[1] &&
-      gridValues[1] === gridValues[2]
-    ) {
-      return true;
-    }
-    return false;
-  };
-
   useEffect(() => {
-    if (didMount.current) {
-      if (hasWon()) {
-        const winner: 1|2 = playerTurn ?  1 : 2;
-        alert(`Winner: Player ${winner}!`);
-      } else {
-        // Problem: when component first renders, useEffect will run, changing the playerTurn
-        setPlayerTurn(!playerTurn);
+
+    // Looks like when we want to use a function inside useEffect we have to define it
+    // inside useEffect.
+    const hasWon = (): boolean => {
+      if (
+        gridValues[0] !== "" &&
+        gridValues[0] === gridValues[1] &&
+        gridValues[1] === gridValues[2]
+      ) {
+        return true;
       }
+      return false;
+    };
+
+    if (hasWon()) {
+      const winner: 1|2 = playerTurn.current ?  1 : 2;
+      alert(`Winner: Player ${winner}!`);
     } else {
-      didMount.current = true;
+      // Problem: when component first renders, useEffect will run, changing the playerTurn
+      // Solution: instead of using useState we have to use useRef because we don't want this
+      // value to render the page.
+      playerTurn.current = !playerTurn.current;
     }
   }, [gridValues]);
 
@@ -40,7 +40,7 @@ export default function Grid() {
     }
 
     let mark: string;
-    mark = playerTurn ? "X" : "O";
+    mark = playerTurn.current ? "X" : "O";
 
     const temporaryArray: string[] = [...gridValues];
     temporaryArray[index] = mark;
