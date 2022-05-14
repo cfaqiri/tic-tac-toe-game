@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import classes from "./Grid.module.css";
+import WinnerModal from "./UI/WinnerModal";
 
 export default function Grid() {
   const defaultGridValues = [...Array(9).fill("")];
 
   const playerTurn = useRef(true);
   const [gridValues, setGridValues] = useState(defaultGridValues);
+  // Redo the "any"
+  const [winner, setWinner] : any = useState();
 
   useEffect(() => {
-
     // Looks like when we want to use a function inside useEffect we have to define it
     // inside useEffect.
     const hasWon = (): boolean => {
@@ -23,8 +25,11 @@ export default function Grid() {
     };
 
     if (hasWon()) {
-      const winner: 1|2 = playerTurn.current ?  1 : 2;
-      alert(`Winner: Player ${winner}!`);
+      const winner: 1 | 2 = playerTurn.current ? 1 : 2;
+      setWinner({
+        title: "End of Game",
+        message: `Player ${winner} has won!`
+      })
     } else {
       // Problem: when component first renders, useEffect will run, changing the playerTurn
       // Solution: instead of using useState we have to use useRef because we don't want this
@@ -47,17 +52,26 @@ export default function Grid() {
     setGridValues(temporaryArray);
   };
 
+  const winnerHandler = () => {
+    setWinner(null);
+    // Find a better way to re-render this component
+    window.location.reload();
+  };
+
   return (
-    <div className={classes.gameboard}>
-      {gridValues.map((value, index) => (
-        <div
-          key={"box-" + index}
-          className={classes.box}
-          onClick={inputSymbol(index)}
-        >
-          {value}
-        </div>
-      ))}
+    <div>
+      {winner && <WinnerModal title={winner.title} message={winner.message} onConfirm={winnerHandler} />}
+      <div className={classes.gameboard}>
+        {gridValues.map((value, index) => (
+          <div
+            key={"box-" + index}
+            className={classes.box}
+            onClick={inputSymbol(index)}
+          >
+            {value}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
