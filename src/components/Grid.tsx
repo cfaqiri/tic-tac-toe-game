@@ -14,6 +14,7 @@ export default function Grid() {
     // Looks like when we want to use a function inside useEffect we have to define it
     // inside useEffect.
     const hasWon = (): boolean => {
+      // Finish this function so that all possible winning scenarios are considered
       if (
         gridValues[0] !== "" &&
         gridValues[0] === gridValues[1] &&
@@ -30,6 +31,7 @@ export default function Grid() {
         title: "End of Game",
         message: `Player ${winner} has won!`
       })
+
     } else {
       // Problem: when component first renders, useEffect will run, changing the playerTurn
       // Solution: instead of using useState we have to use useRef because we don't want this
@@ -54,7 +56,10 @@ export default function Grid() {
 
   const winnerHandler = () => {
     setWinner(null);
-    // Find a better way to re-render this component
+    
+    // setGridValues(defaultGridValues);
+    // Figure out how to rematch game without hard refresh
+    // Investigate React strictmode 
     window.location.reload();
   };
 
