@@ -6,22 +6,50 @@ export default function Grid() {
   const defaultGridValues = [...Array(9).fill("")];
 
   const playerTurn = useRef(true);
+
+  // Variable to check number of clicks
+  const nTurns = useRef(0);
   const [gridValues, setGridValues] = useState(defaultGridValues);
   // Redo the "any"
   const [winner, setWinner] : any = useState();
 
   useEffect(() => {
+    // function to check if all array values are the same except when is empty
+    const allEqual = (arr: string[]) => arr.every(v => arr[0] !== "" && v === arr[0])
+
     // Looks like when we want to use a function inside useEffect we have to define it
     // inside useEffect.
     const hasWon = (): boolean => {
-      // Finish this function so that all possible winning scenarios are considered
-      if (
-        gridValues[0] !== "" &&
-        gridValues[0] === gridValues[1] &&
-        gridValues[1] === gridValues[2]
-      ) {
-        return true;
+      // wins 0-2, 3-5, 6-8 in a row
+      for (let i = 0; i < 3; i++) {
+        let indexes: number[] = [0 + i*3, 1 + i*3, 2 + i*3];
+        let rowArr: string[] = indexes.map(i => gridValues[i]);
+        if (allEqual(rowArr)) {
+          return true
+        }
       }
+
+      // wins 0-3-6, 1-4-7, 2-5-8 in a col
+      for (let i = 0; i < 3; i++) {
+        let indexes: number[] = [0*3 + i, 1*3 + i, 2*3 + i];
+        let colArr: string[] = indexes.map(i => gridValues[i]);
+        if (allEqual(colArr)) {
+          return true
+        }
+      }
+
+      // wins 0-4-8
+      const firstDiagonalArr: string[] = [0, 4, 8].map(i => gridValues[i]);
+      if (allEqual(firstDiagonalArr)) {
+        return true
+      }
+
+      // wins 2-4-6
+      const secondDiagonalArr: string[] = [2, 4, 6].map(i => gridValues[i]);
+      if (allEqual(secondDiagonalArr)) {
+        return true
+      }
+
       return false;
     };
 
@@ -32,6 +60,9 @@ export default function Grid() {
         message: `Player ${winner} has won!`
       })
 
+    // Check if it's a tie (when 9 clicks were made)
+    } else if (nTurns.current === 9) {
+      alert("It's a tie!")
     } else {
       // Problem: when component first renders, useEffect will run, changing the playerTurn
       // Solution: instead of using useState we have to use useRef because we don't want this
@@ -52,6 +83,8 @@ export default function Grid() {
     const temporaryArray: string[] = [...gridValues];
     temporaryArray[index] = mark;
     setGridValues(temporaryArray);
+    // When a click happens we count until it reach 9
+    nTurns.current++
   };
 
   const winnerHandler = () => {
