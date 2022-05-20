@@ -8,7 +8,7 @@ export default function Grid() {
   const playerTurn = useRef(true);
 
   // Track the first render of the component
-  const firstUpdate = useRef(true);
+  // const firstUpdate = useRef(true);
 
   // Variable to check number of clicks
   const nTurns = useRef(0);
@@ -17,12 +17,12 @@ export default function Grid() {
   const [winner, setWinner] : any = useState(false);
 
   useEffect(() => {
-    console.log("rendering");
+    // console.log("rendering");
     // Ensure that component doesn't run twice on first render 
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    } 
+    // if (firstUpdate.current) {
+    //   firstUpdate.current = false;
+    //   return;
+    // } 
     
     // function to check if all array values are the same except when is empty
     const allEqual = (arr: string[]) => arr.every(v => arr[0] !== "" && v === arr[0])
@@ -64,7 +64,8 @@ export default function Grid() {
     };
 
     if (hasWon()) {
-      const winner: 1 | 2 = playerTurn.current ? 1 : 2;
+      // Using !playerTurn.current to get which player was previous turn
+      const winner: 1 | 2 = !playerTurn.current ? 1 : 2;
       setWinner({
         title: "End of Game",
         message: `Player ${winner} has won!`
@@ -76,11 +77,6 @@ export default function Grid() {
         title: "End of Game",
         message: `It's a tie!`
       })
-    } else {
-      // Problem: when component first renders, useEffect will run, changing the playerTurn
-      // Solution: instead of using useState we have to use useRef because we don't want this
-      // value to render the page.
-      playerTurn.current = !playerTurn.current;
     }
   }, [gridValues]);
 
@@ -95,6 +91,10 @@ export default function Grid() {
 
     const temporaryArray: string[] = [...gridValues];
     temporaryArray[index] = mark;
+    // Problem: Before we changed player's turn inside useEffect so it was affected
+    // by rendering when starting the app.
+    // Solution: Player's turn must be changed when clicked on boxes
+    playerTurn.current = !playerTurn.current;
     setGridValues(temporaryArray);
     // When a click happens we count until it reach 9
     nTurns.current++
@@ -105,7 +105,7 @@ export default function Grid() {
     setGridValues(defaultGridValues);
     playerTurn.current = true;
     nTurns.current = 0;
-    firstUpdate.current = true;
+    // firstUpdate.current = true;
   };
 
   return (
