@@ -1,5 +1,5 @@
 # Introduction
-This project is a local 2-player Tic Tac Toe game, currently in development. 
+This project is a local 2-player Tic Tac Toe game.
 
 # Tools
 React, TypeScript, HTML, CSS
