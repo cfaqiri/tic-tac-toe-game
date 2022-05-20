@@ -7,13 +7,23 @@ export default function Grid() {
 
   const playerTurn = useRef(true);
 
+  // Track the first render of the component
+  const firstUpdate = useRef(true);
+
   // Variable to check number of clicks
   const nTurns = useRef(0);
   const [gridValues, setGridValues] = useState(defaultGridValues);
   // Redo the "any"
-  const [winner, setWinner] : any = useState();
+  const [winner, setWinner] : any = useState(false);
 
   useEffect(() => {
+    console.log("rendering");
+    // Ensure that component doesn't run twice on first render 
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    } 
+    
     // function to check if all array values are the same except when is empty
     const allEqual = (arr: string[]) => arr.every(v => arr[0] !== "" && v === arr[0])
 
@@ -62,7 +72,10 @@ export default function Grid() {
 
     // Check if it's a tie (when 9 clicks were made)
     } else if (nTurns.current === 9) {
-      alert("It's a tie!")
+      setWinner({
+        title: "End of Game",
+        message: `It's a tie!`
+      })
     } else {
       // Problem: when component first renders, useEffect will run, changing the playerTurn
       // Solution: instead of using useState we have to use useRef because we don't want this
@@ -89,11 +102,10 @@ export default function Grid() {
 
   const winnerHandler = () => {
     setWinner(null);
-    
-    // setGridValues(defaultGridValues);
-    // Figure out how to rematch game without hard refresh
-    // Investigate React strictmode 
-    window.location.reload();
+    setGridValues(defaultGridValues);
+    playerTurn.current = true;
+    nTurns.current = 0;
+    firstUpdate.current = true;
   };
 
   return (
