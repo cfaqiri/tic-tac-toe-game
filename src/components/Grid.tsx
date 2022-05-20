@@ -6,29 +6,15 @@ export default function Grid() {
   const defaultGridValues = [...Array(9).fill("")];
 
   const playerTurn = useRef(true);
-
-  // Track the first render of the component
-  // const firstUpdate = useRef(true);
-
   // Variable to check number of clicks
   const nTurns = useRef(0);
   const [gridValues, setGridValues] = useState(defaultGridValues);
-  // Redo the "any"
   const [winner, setWinner] : any = useState(false);
 
   useEffect(() => {
-    // console.log("rendering");
-    // Ensure that component doesn't run twice on first render 
-    // if (firstUpdate.current) {
-    //   firstUpdate.current = false;
-    //   return;
-    // } 
-    
-    // function to check if all array values are the same except when is empty
+    // Check if all array values are the same except when is empty
     const allEqual = (arr: string[]) => arr.every(v => arr[0] !== "" && v === arr[0])
 
-    // Looks like when we want to use a function inside useEffect we have to define it
-    // inside useEffect.
     const hasWon = (): boolean => {
       // wins 0-2, 3-5, 6-8 in a row
       for (let i = 0; i < 3; i++) {
@@ -91,9 +77,6 @@ export default function Grid() {
 
     const temporaryArray: string[] = [...gridValues];
     temporaryArray[index] = mark;
-    // Problem: Before we changed player's turn inside useEffect so it was affected
-    // by rendering when starting the app.
-    // Solution: Player's turn must be changed when clicked on boxes
     playerTurn.current = !playerTurn.current;
     setGridValues(temporaryArray);
     // When a click happens we count until it reach 9
@@ -105,7 +88,6 @@ export default function Grid() {
     setGridValues(defaultGridValues);
     playerTurn.current = true;
     nTurns.current = 0;
-    // firstUpdate.current = true;
   };
 
   return (
